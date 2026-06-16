@@ -1,0 +1,32 @@
+version: 2
+
+# gozer vendors its dependencies (vendor/ is committed for offline builds), so
+# builds run with -mod=vendor and there is no go-mod-tidy before-hook (it would
+# try to mutate go.mod/go.sum against the vendored tree).
+
+builds:
+  - id: gozer
+    main: ./cmd/gozer
+    binary: gozer
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - -trimpath
+      - -mod=vendor
+    ldflags:
+      - -s -w -X main.version={{.Version}}
+    goos: [linux]
+    goarch: [amd64, arm64]
+
+archives:
+  - formats: [tar.gz]
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+
+checksum:
+  name_template: "checksums.txt"
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+release:
+  prerelease: auto

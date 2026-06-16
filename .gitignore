@@ -1,0 +1,4 @@
+*.log
+*.tmp
+# built Go binary (vendor/ IS committed for offline builds)
+/gozer
